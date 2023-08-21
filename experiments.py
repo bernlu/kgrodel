@@ -27,7 +27,9 @@ print('ne: ', args.ne)
 print('jlt: ', args.jlt)
 print('problem: ', args.problem)
 
-G = nk.readGraph(args.instance, nk.Format.NetworkitBinary)
+G = nk.readGraph(args.instance)
+G = nk.components.ConnectedComponents(G).extractLargestConnectedComponent(G, True)
+
 if args.problem == 'global_improvement':
     problem = nk.robustness.RobustnessProblem.GLOBAL_IMPROVEMENT
 elif args.problem == 'global_reduction':

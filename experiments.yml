@@ -96,10 +96,10 @@ variants:
         extra_args: ['-k', '5']
       - name: 'k-20'
         extra_args: ['-k', '20']
-      # - name: 'k-50'
-      #   extra_args: ['-k', '50']
-      # - name: 'k-100'
-      #   extra_args: ['-k', '100']
+      - name: 'k-50'
+        extra_args: ['-k', '50']
+      - name: 'k-100'
+        extra_args: ['-k', '100']
 
   - axis: 'accuracy'
     items:
@@ -134,37 +134,31 @@ instances:
   - repo: local
     set: [medium-graphs, additional-exhaustive-search]
     items: 
-      - inf-power.nkb
-      - facebook_ego_combined
-      - web-spam.nkb
-      - wiki-Vote.nkb
-      - p2p-Gnutella09.nkb
-      - p2p-Gnutella04.nkb
+      - inf-power.mtx
+      - facebook_combined
+      - web-spam.mtx
+      - wiki-Vote
+      - p2p-Gnutella09
+      - p2p-Gnutella04
       - web-indochina-2004.nkb
-      - arxiv-heph.nkb
+      - ca-HepPh
   - repo: local
     set: [medium-graphs]
     items:
     - web-webbase-2001.nkb
-    - arxiv-astro-ph.nkb
-    - as-caida20071105.nkb
-    - cit-HepTh.nkb
-    - ia-email-EU.nkb
+    - ca-AstroPh
+    - as-caida20071105
+    - cit-HepTh
+    - ia-email-EU.mtx
   - repo: local
     set: [large-graphs]
     items: 
-      - loc-brightkite_edges.nkb
-      - soc-Slashdot0902.nkb
-      - ia-wiki-Talk.nkb
-      - livemocha.nkb
-      - road-usroads.nkb
-      - flickrEdges.nkb
-  - repo: local
-    set: [configuration-exp-exhaustive-search]
-    items:
-      - erdos_renyi_1000_0.02.nkb
-      - watts_strogatz_1000_7_0.3.nkb
-      - barabasi_albert_2_1000_2.nkb
+      - loc-brightkite_edges
+      - soc-Slashdot0902
+      - ia-wiki-Talk.mtx
+      - livemocha
+      - road-usroads.mtx
+      - flickrEdges
 
 # matrix constructed from paper description
 matrix:
