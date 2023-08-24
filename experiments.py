@@ -11,8 +11,11 @@ parser.add_argument('-eps', type=float)
 parser.add_argument('-ne', type=int)
 parser.add_argument('--jlt', action="store_true")
 parser.add_argument('-p', '--problem')
+parser.add_argument('--loglevel')
 args = parser.parse_args()
 
+if args.loglevel:
+      nk.engineering.setLogLevel(args.loglevel)
 
 if not args.instance:
     print('error: instance required')
@@ -29,6 +32,10 @@ print('problem: ', args.problem)
 
 G = nk.readGraph(args.instance)
 G = nk.components.ConnectedComponents(G).extractLargestConnectedComponent(G, True)
+G.removeMultiEdges()
+G.removeSelfLoops()
+
+nk.overview(G)
 
 if args.problem == 'global_improvement':
     problem = nk.robustness.RobustnessProblem.GLOBAL_IMPROVEMENT
