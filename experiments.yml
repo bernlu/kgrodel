@@ -1,91 +1,29 @@
 experiments:    
-  - name: stGreedy  # submodular greedy
-    args: ['python', 'experiments.py', 'stGreedy', '-i', '@INSTANCE@', '@EXTRA_ARGS@', ]
+  - name: stGreedy
+    args: ['python', 'experiments.py', 'stGreedy', '-p', 'global_reduction', '-i', '@INSTANCE@', '@EXTRA_ARGS@', ]
     stdout: out
-    # use_builds: [graph-robustness-k]
     timeout: 21600
     procs_per_node: 24
     num_threads: 24
-  - name: simplStoch # stochastic greedy
-    args: ['python', 'experiments.py', 'simplStoch', '-i', '@INSTANCE@', '@EXTRA_ARGS@', ]
+  - name: simplStoch
+    args: ['python', 'experiments.py', 'simplStoch', '-p', 'global_reduction', '-i', '@INSTANCE@', '@EXTRA_ARGS@', ]
     stdout: out
-    # use_builds: [graph-robustness-k]
     timeout: 21600
     procs_per_node: 24
     num_threads: 24
   - name: colStoch
-    args: ['python', 'experiments.py', 'colStoch', '-i', '@INSTANCE@', '@EXTRA_ARGS@', ]
+    args: ['python', 'experiments.py', 'colStoch', '-p', 'global_reduction', '-i', '@INSTANCE@', '@EXTRA_ARGS@', ]
     stdout: out
-    # use_builds: [graph-robustness-k]
     timeout: 21600
     procs_per_node: 24
     num_threads: 24
   - name: specStoch
-    args: ['python', 'experiments.py', 'specStoch', '-i', '@INSTANCE@', '@EXTRA_ARGS@', ]
+    args: ['python', 'experiments.py', 'specStoch', '-p', 'global_reduction', '-i', '@INSTANCE@', '@EXTRA_ARGS@', ]
     stdout: out
-    # use_builds: [graph-robustness-k]
     timeout: 21600
     procs_per_node: 24
     num_threads: 24
 
-# builds:
-#   - name: nk-core
-#     git: https://gitlab.informatik.hu-berlin.de/berneluk/networkit
-#     recursive-clone: true
-#     configure:
-#       - args:
-#         - 'cmake'
-#         - '@THIS_SOURCE_DIR@'
-#         - '-DCMAKE_INSTALL_PREFIX=@THIS_PREFIX_DIR@'
-#         - '-DCMAKE_BUILD_TYPE=Release'
-#     compile:
-#       - args:
-#         - 'make'
-#         - '-j@PARALLELISM@'
-#     install:
-#       - args:
-#         - 'make'
-#         - 'install'
-#   - name: nk-python
-#     git: https://gitlab.informatik.hu-berlin.de/macsy/code-staff/robustness-deletions-experiments
-#     # recursive-clone: true
-#     configure:
-#       - args:
-#         - 'cmake'
-#         - '@THIS_SOURCE_DIR@'
-#         - '-DCMAKE_INSTALL_PREFIX=@THIS_PREFIX_DIR@'
-#         - '-DCMAKE_BUILD_TYPE=Release'
-#     compile:
-#       - args:
-#         - 'make'
-#         - '-j@PARALLELISM@'
-#     install:
-#       - args:
-#         - 'make'
-#         - 'install'
-
-# revisions:
-#   - name: k-grip
-#     build_version:
-#       'graph-robustness-k': '13ac360771b7a3e8baf2c5d13a658f156b8002c6'
-#   - name: local-addition
-#     build_version:
-#       'graph-robustness-k': 'local-edge-addition'
-#   - name: local-opt-fel
-#     build_version:
-#       'graph-robustness-k': 'local-addition-opt-fel'
-#   - name: local-addition-solver-copy  # this version creates a copy of the initial solver state to reset to. Additionally, G is now reset by removing edges and no longer stored as copy
-#     build_version:
-#       'graph-robustness-k': '9450cb77a8c175ed673cff606c37c844140bd481'
-#   - name: local-opt-fel-solver-copy   # this version creates a copy of the initial solver state to reset to. Additionally, G is now reset by removing edges and no longer stored as copy
-#     build_version:
-#       'graph-robustness-k': '09efa6a351bd32ff7f7f5ffff16696a8081a521d'
-#   - name: local-addition-v3  # this version creates a copy of the initial solver state to reset to. Additionally, G is now reset by removing edges and no longer stored as copy
-#     build_version:
-#       'graph-robustness-k': '00b965f011b1c195df60aead3a5a1000b05f3bce'
-#   - name: local-opt-fel-v3   # this version creates a copy of the initial solver state to reset to. Additionally, G is now reset by removing edges and no longer stored as copy
-#     build_version:
-#       'graph-robustness-k': '463e3d83847612ee7a157476b95344dc03fe6b34'
 
 variants:
   - axis: 'k-size'
@@ -113,7 +51,7 @@ variants:
       - name: 'ne_50'
         extra_args: ['-ne', '50']
       - name: 'ne_80'
-        extra_args: ['-ne', '80']
+        extra_args: ['-ne', '100']
 
   - axis: 'JLT'
     items:
@@ -121,18 +59,14 @@ variants:
         extra_args: ['--jlt']
       - name: 'without_JLT'
         extra_args: []
-  - axis: 'problem'
-    items:
-      - name: 'GRIP'
-        extra_args: ['-p', 'global_improvement']
-      - name: 'GRRP'
-        extra_args: ['-p', 'global_reduction']
+      - name: 'fast_JLT'
+        extra_args: ['--jlt', '--jlt_fast']
 
         
 instdir: "/work/global/robustness_graphs"
 instances:
   - repo: local
-    set: [medium-graphs, additional-exhaustive-search]
+    set: [medium-graphs]
     items: 
       - inf-power.mtx
       - facebook_combined
@@ -142,14 +76,11 @@ instances:
       - p2p-Gnutella04
       - web-indochina-2004.nkb
       - ca-HepPh
-  - repo: local
-    set: [medium-graphs]
-    items:
-    - web-webbase-2001.nkb
-    - ca-AstroPh
-    - as-caida20071105
-    - cit-HepTh
-    - ia-email-EU.mtx
+      - web-webbase-2001.nkb
+      - ca-AstroPh
+      - as-caida20071105.nkb
+      - cit-HepTh
+      - ia-email-EU.mtx
   - repo: local
     set: [large-graphs]
     items: 
@@ -158,166 +89,23 @@ instances:
       - ia-wiki-Talk.mtx
       - livemocha
       - road-usroads.mtx
-      - flickrEdges
+      - flickrEdges.nkb
 
-# matrix constructed from paper description
 matrix:
   include:
-    ## comparision to state of the art
-    # medium graphs:
     - experiments: ['stGreedy']
-      instsets: ['additional-exhaustive-search']
-      axes: ['k-size', 'problem']
+      instsets: ['medium-graphs', 'large-graphs']
+      axes: ['k-size']
 
     - experiments: ['simplStoch']
-      instsets: ['additional-exhaustive-search']
-      axes: ['k-size', 'accuracy', 'JLT', 'problem']
-      variants: ['eps_0.9']
+      instsets: ['medium-graphs', 'large-graphs']
+      axes: ['k-size', 'accuracy', 'JLT']
 
-    - experiments: ['colStoch'] # colStoch and colStochJLT (depending on LinAlg variant)
-      instsets: ['additional-exhaustive-search']
-      axes: ['k-size', 'accuracy', 'JLT', 'problem']
-      variants: ['eps_0.9']
-
-    - experiments: ['specStoch']
-      instsets: ['additional-exhaustive-search']
-      axes: ['k-size', 'ne', 'problem', 'accuracy']
-      variants: ['ne_50', 'eps_0.9']
-
-    # large graphs: (TODO)
-
-
-    ## new stuff
-
-    # # run exhaustive search on some medium graphs
-    # - experiments: ['exhaustive-search']
-    #   instsets: ['additional-exhaustive-search']
-    #   axes: ['k-size']
-    #   revisions: [k-grip]
-
-    # # local addition with medium graphs:
-    # - experiments: ['stGreedy']
-    #   instsets: ['medium-graphs']
-    #   axes: ['k-size', 'num-focus-nodes', 'focus-seed']
-    #   variants: ['focus-100']
-    #   revisions: [local-addition, local-opt-fel, local-addition-solver-copy, local-opt-fel-solver-copy]
-
-    # - experiments: ['simplStoch']
-    #   instsets: ['medium-graphs']
-    #   axes: ['k-size', 'accuracy', 'num-focus-nodes', 'focus-seed']
-    #   variants: ['eps_0.9', 'focus-100']
-    #   revisions: [local-addition, local-opt-fel, local-addition-solver-copy, local-opt-fel-solver-copy]
-      
-    # - experiments: ['simplStochDyn'] # with JLT LinAlg solvers this is simplStochJLT
-    #   instsets: ['medium-graphs']
-    #   axes: ['k-size', 'accuracy', 'linalg', 'num-focus-nodes', 'focus-seed']
-    #   variants: ['eps_0.9', 'jlt-lu', 'focus-100']
-    #   revisions: [local-addition, local-opt-fel, local-addition-solver-copy, local-opt-fel-solver-copy]
-
-    # - experiments: ['colStoch'] # colStoch and colStochJLT (depending on LinAlg variant)
-    #   instsets: ['medium-graphs']
-    #   axes: ['k-size', 'accuracy', 'linalg', 'accuracy_trees', 'heuristic', 'num-focus-nodes', 'focus-seed']
-    #   variants: ['eps_0.9', 'dense-lu', 'jlt-lu', 'ust-diag', 'lamg', 'jlt-lamg', 'focus-100']
-    #   revisions: [local-addition, local-opt-fel, local-addition-solver-copy, local-opt-fel-solver-copy]
+    - experiments: ['colStoch']
+      instsets: ['medium-graphs', 'large-graphs']
+      axes: ['k-size', 'accuracy', 'JLT']
 
     # - experiments: ['specStoch']
     #   instsets: ['medium-graphs']
-    #   axes: ['k-size', 'ne', 'linalg', 'num-focus-nodes', 'focus-seed']
-    #   variants: ['ne_50', 'dense-lu', 'focus-100']
-    #   revisions: [local-addition, local-addition-solver-copy, local-opt-fel-solver-copy]
-      
-    #  # similar to above, but focus 50 nodes and k<=20 and skip some less interesting variants:
-    # - experiments: ['stGreedy']
-    #   instsets: ['medium-graphs']
-    #   axes: ['k-size', 'num-focus-nodes', 'focus-seed']
-    #   variants: ['focus-50', 'k-2', 'k-5', 'k-20']
-    #   revisions: [local-addition-solver-copy, local-opt-fel-solver-copy]
-
-    # - experiments: ['simplStoch']
-    #   instsets: ['medium-graphs']
-    #   axes: ['k-size', 'accuracy', 'num-focus-nodes', 'focus-seed']
-    #   variants: ['eps_0.9', 'focus-50', 'k-2', 'k-5', 'k-20']
-    #   revisions: [local-addition-solver-copy, local-opt-fel-solver-copy]
-      
-    # - experiments: ['simplStochDyn'] # with JLT LinAlg solvers this is simplStochJLT
-    #   instsets: ['medium-graphs']
-    #   axes: ['k-size', 'accuracy', 'linalg', 'num-focus-nodes', 'focus-seed']
-    #   variants: ['eps_0.9', 'jlt-lu', 'focus-50', 'k-2', 'k-5', 'k-20']
-    #   revisions: [local-addition-solver-copy, local-opt-fel-solver-copy]
-
-    # - experiments: ['colStoch'] # colStoch and colStochJLT (depending on LinAlg variant)
-    #   instsets: ['medium-graphs']
-    #   axes: ['k-size', 'accuracy', 'linalg', 'accuracy_trees', 'heuristic', 'num-focus-nodes', 'focus-seed']
-    #   variants: ['eps_0.9', 'dense-lu', 'jlt-lu', 'ust-diag', 'focus-50', 'k-2', 'k-5', 'k-20']
-    #   revisions: [local-addition-solver-copy, local-opt-fel-solver-copy]
-
-    # - experiments: ['specStoch']
-    #   instsets: ['medium-graphs']
-    #   axes: ['k-size', 'ne', 'linalg', 'num-focus-nodes', 'focus-seed']
-    #   variants: ['ne_50', 'dense-lu', 'focus-50', 'k-2', 'k-5', 'k-20']
-    #   revisions: [local-addition-solver-copy, local-opt-fel-solver-copy]
-    
-    
-    #  # same experiments, but each one runs on a node on its own, without interference from other slurm jobs. still running single-threaded though.
-    #  # similar to above, but focus 25 nodes and k<=20 and skip some less interesting variants:
-    # - experiments: ['stGreedy_single']
-    #   instsets: ['medium-graphs']
-    #   axes: ['k-size', 'num-focus-nodes', 'focus-seed']
-    #   variants: ['focus-25', 'k-2', 'k-5', 'k-20']
-    #   revisions: [local-opt-fel-v3, local-addition-v3]
-
-    # - experiments: ['simplStoch_single']
-    #   instsets: ['medium-graphs']
-    #   axes: ['k-size', 'accuracy', 'num-focus-nodes', 'focus-seed']
-    #   variants: ['eps_0.9', 'focus-25', 'k-2', 'k-5', 'k-20']
-    #   revisions: [local-opt-fel-v3, local-addition-v3]
-      
-    # - experiments: ['simplStochDyn_single'] # with JLT LinAlg solvers this is simplStochJLT
-    #   instsets: ['medium-graphs']
-    #   axes: ['k-size', 'accuracy', 'linalg', 'num-focus-nodes', 'focus-seed']
-    #   variants: ['eps_0.9', 'jlt-lu', 'focus-25', 'k-2', 'k-5', 'k-20']
-    #   revisions: [local-opt-fel-v3, local-addition-v3]
-
-    # - experiments: ['colStoch_single'] # colStoch and colStochJLT (depending on LinAlg variant)
-    #   instsets: ['medium-graphs']
-    #   axes: ['k-size', 'accuracy', 'linalg', 'accuracy_trees', 'heuristic', 'num-focus-nodes', 'focus-seed']
-    #   variants: ['eps_0.9', 'dense-lu', 'jlt-lu', 'ust-diag', 'focus-25', 'k-2', 'k-5', 'k-20']
-    #   revisions: [local-opt-fel-v3, local-addition-v3]
-
-    # - experiments: ['specStoch_single']
-    #   instsets: ['medium-graphs']
-    #   axes: ['k-size', 'ne', 'linalg', 'num-focus-nodes', 'focus-seed']
-    #   variants: ['ne_50', 'dense-lu', 'focus-25', 'k-2', 'k-5', 'k-20']
-    #   revisions: [local-opt-fel-v3, local-addition-v3]
-      
-    # # large graphs
-    # - experiments: ['stGreedy_single']
-    #   instsets: ['large-graphs']
-    #   axes: ['k-size', 'num-focus-nodes', 'focus-seed']
-    #   variants: ['focus-25', 'k-2', 'k-5', 'k-20']
-    #   revisions: [local-opt-fel-v3, local-addition-v3]
-
-    # - experiments: ['simplStoch_single']
-    #   instsets: ['large-graphs']
-    #   axes: ['k-size', 'accuracy', 'num-focus-nodes', 'focus-seed']
-    #   variants: ['eps_0.9', 'focus-25', 'k-2', 'k-5', 'k-20']
-    #   revisions: [local-opt-fel-v3, local-addition-v3]
-      
-    # - experiments: ['simplStochDyn_single'] # with JLT LinAlg solvers this is simplStochJLT
-    #   instsets: ['large-graphs']
-    #   axes: ['k-size', 'accuracy', 'linalg', 'num-focus-nodes', 'focus-seed']
-    #   variants: ['eps_0.9', 'jlt-lamg', 'focus-25', 'k-2', 'k-5', 'k-20']
-    #   revisions: [local-opt-fel-v3, local-addition-v3]
-
-    # - experiments: ['colStoch_single'] # colStoch and colStochJLT (depending on LinAlg variant)
-    #   instsets: ['large-graphs']
-    #   axes: ['k-size', 'accuracy', 'linalg', 'accuracy_trees', 'heuristic', 'num-focus-nodes', 'focus-seed']
-    #   variants: ['eps_0.9', 'lamg', 'jlt-lamg', 'ust-diag', 'focus-25', 'k-2', 'k-5', 'k-20']
-    #   revisions: [local-opt-fel-v3, local-addition-v3]
-
-    # - experiments: ['specStoch_single']
-    #   instsets: ['large-graphs']
-    #   axes: ['k-size', 'ne', 'linalg', 'num-focus-nodes', 'focus-seed']
-    #   variants: ['ne_50', 'lamg', 'focus-25', 'k-2', 'k-5', 'k-20']
-    #   revisions: [local-opt-fel-v3, local-addition-v3]
-  
+    #   axes: ['k-size', 'ne', 'accuracy']
+      # variants: ['ne_50', 'eps_0.9']
