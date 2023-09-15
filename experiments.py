@@ -13,6 +13,7 @@ parser.add_argument('--jlt', action="store_true")
 parser.add_argument('--jlt_fast', action="store_true")
 parser.add_argument('-p', '--problem')
 parser.add_argument('--loglevel')
+parser.add_argument('--sampling')
 args = parser.parse_args()
 
 if args.loglevel:
@@ -31,6 +32,7 @@ print('ne: ', args.ne)
 print('jlt: ', args.jlt)
 print('jlt_fast: ', args.jlt_fast)
 print('problem: ', args.problem)
+print('sampling: ', args.sampling)
 
 G = nk.readGraph(args.instance)
 G = nk.components.ConnectedComponents(G).extractLargestConnectedComponent(G, True)
@@ -55,13 +57,24 @@ if args.jlt_fast:
     jltLossCorrection = False
 else:
     jltLossCorrection = True
+    
+if args.sampling:
+    if args.sampling == 'MAX_DIAG':
+        sampling = nk.robustness.SamplingVariant.MAX_DIAG
+    if args.sampling == 'MIN_DIAG':
+        sampling = nk.robustness.SamplingVariant.MIN_DIAG
+    if args.sampling == 'UNIFORM':
+        sampling = nk.robustness.SamplingVariant.UNIFORM
+
+# --jlt            -> jlt=True, lossCorrection = True
+# --jlt --jlt-fast -> jlt=True, lossCorrection = False
 
 if args.algorithm == 'stGreedy':
     alg = nk.robustness.StGreedy(G, args.k, problem)
 elif args.algorithm == 'simplStoch':
     alg = nk.robustness.SimplStoch(G, args.k, problem, args.eps, useJLT=jlt, jltLossCorrection=jltLossCorrection)
 elif args.algorithm == 'colStoch':
-    alg = nk.robustness.ColStoch(G, args.k, problem, args.eps, useJLT=jlt, jltLossCorrection=jltLossCorrection)
+    alg = nk.robustness.ColStoch(G, args.k, problem, args.eps, useJLT=jlt, jltLossCorrection=jltLossCorrection,  samplingVariant=sampling)
 elif args.algorithm == 'specStoch':
 	alg = nk.robustness.SpecStoch(G, args.k, problem, args.eps, args.ne)
 

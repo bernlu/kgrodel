@@ -50,8 +50,10 @@ variants:
     items:
       - name: 'ne_50'
         extra_args: ['-ne', '50']
-      - name: 'ne_80'
+      - name: 'ne_100'
         extra_args: ['-ne', '100']
+      - name: 'ne_200'
+        extra_args: ['-ne', '200']
 
   - axis: 'JLT'
     items:
@@ -61,6 +63,16 @@ variants:
         extra_args: []
       - name: 'fast_JLT'
         extra_args: ['--jlt', '--jlt_fast']
+
+  - axis: 'diagSampling'
+    items:
+      - name: 'MAX_DIAG'
+        extra_args: ['--sampling', 'MAX_DIAG']
+      - name: 'MIN_DIAG'
+        extra_args: ['--sampling', 'MIN_DIAG']
+      - name: 'UNIFORM'
+        extra_args: ['--sampling', 'UNIFORM']
+  
 
         
 instdir: "/work/global/robustness_graphs"
@@ -103,9 +115,13 @@ matrix:
 
     - experiments: ['colStoch']
       instsets: ['medium-graphs', 'large-graphs']
+      axes: ['k-size', 'accuracy', 'JLT', 'diagSampling']
+      
+    - experiments: ['colStoch']
+      instsets: ['medium-graphs', 'large-graphs']
       axes: ['k-size', 'accuracy', 'JLT']
 
     # - experiments: ['specStoch']
-    #   instsets: ['medium-graphs']
+    #   instsets: ['medium-graphs', 'large-graphs']
     #   axes: ['k-size', 'ne', 'accuracy']
-      # variants: ['ne_50', 'eps_0.9']
+    #   variants: ['ne_50', 'ne_100']
